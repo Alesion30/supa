@@ -1,9 +1,13 @@
-import { App } from "@slack/bolt";
-import { PORT } from "./config";
+import { App, ExpressReceiver, LogLevel } from "@slack/bolt";
+import { PORT, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } from "./config";
+
+const receiver = new ExpressReceiver({ signingSecret: SLACK_SIGNING_SECRET });
 
 const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  token: SLACK_BOT_TOKEN,
+  signingSecret: SLACK_SIGNING_SECRET,
+  logLevel: LogLevel.DEBUG,
+  receiver,
 });
 
 app.message("hello-test", async ({ message, say }) => {
@@ -13,31 +17,35 @@ app.message("hello-test", async ({ message, say }) => {
 });
 
 app.message("hello-test2", async ({ message, say }) => {
-    await say({
-      blocks: [
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": "Hello!"
+  await say({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "Hello!",
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Click Me",
           },
-          "accessory": {
-            "type": "button",
-            "text": {
-              "type": "plain_text",
-              "text": "Click Me"
-            },
-            "action_id": "hello-test2-btn"
-          }
-        }
-      ],
-    });
+          action_id: "hello-test2-btn",
+        },
+      },
+    ],
+  });
 });
 
 app.action("hello-test2-btn", async ({ body, ack, say }) => {
-    await ack();
-    await say(`<@${body.user.id}> clicked the button`);
-  });
+  await ack();
+  await say(`<@${body.user.id}> clicked the button`);
+});
+
+receiver.router.post("/secret-page", (req, res) => {
+  res.send("yay!");
+});
 
 const run = async () => {
   await app.start(PORT);
