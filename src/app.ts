@@ -1,3 +1,4 @@
+import { PlainTextInput, TimePickerInput } from "./components/input";
 import { app, receiver } from "./plugins/bolt";
 
 /** イベント・ルーティングなどを登録 */
@@ -38,63 +39,44 @@ export const registerApp = () => {
             text: "タスクの登録",
           },
           blocks: [
-            {
-              type: "input",
+            PlainTextInput({
               block_id: "task_input_block1",
-              label: {
-                type: "plain_text",
-                text: "1つ目",
-              },
-              element: {
-                type: "plain_text_input",
-                action_id: "task_act1",
-                multiline: true,
-                placeholder: {
-                  type: "plain_text",
-                  text: "例) #1のissueに取り掛かる",
-                },
-              },
-            },
-            {
-              type: "input",
+              action_id: "task_act1",
+              label: "1つ目",
+              placeholder: "例) #1のissueに取り掛かる",
+              multiline: true,
+              optional: false,
+            }),
+            PlainTextInput({
               block_id: "task_input_block2",
-              label: {
-                type: "plain_text",
-                text: "2つ目",
-              },
-              element: {
-                type: "plain_text_input",
-                action_id: "task_act2",
-                multiline: true,
-                placeholder: {
-                  type: "plain_text",
-                  text: "例) 論文を一つ読む",
-                },
-              },
+              action_id: "task_act2",
+              label: "2つ目",
+              placeholder: "例) 論文を一つ読む",
+              multiline: true,
               optional: true,
-            },
-            {
-              type: "input",
+            }),
+            PlainTextInput({
               block_id: "task_input_block3",
-              label: {
-                type: "plain_text",
-                text: "3つ目",
-              },
-              element: {
-                type: "plain_text_input",
-                action_id: "task_act3",
-                multiline: true,
-                placeholder: {
-                  type: "plain_text",
-                  text: "例) 昼ごはんをちゃんと食べる",
-                },
-              },
+              action_id: "task_act3",
+              label: "3つ目",
+              placeholder: "例) 懸垂を5回する",
+              multiline: true,
               optional: true,
-            },
+            }),
+            TimePickerInput({
+              block_id: "task_time_block",
+              action_id: "task_time_act",
+              label: "帰宅時間（帰宅する頃にリマインドします）",
+              initial_time: "17:00",
+            }),
           ],
           submit: {
             type: "plain_text",
             text: "登録",
+          },
+          close: {
+            type: "plain_text",
+            text: "閉じる",
           },
         },
       });
