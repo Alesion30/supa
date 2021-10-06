@@ -8,10 +8,18 @@ import {
 import { app, receiver } from "./plugins/bolt";
 import { supabase } from "./plugins/supabase";
 import { User } from "./types/user";
+import { TaskListBlocks } from "./components/task-list";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
   app.message("register-task", showBeggingMessage);
+
+  app.message("test", async ({ say, message }) => {
+    // @ts-ignore
+    const user = message.user as string;
+
+    await say({ blocks: TaskListBlocks({ user }) });
+  });
 
   app.action(showRegisterTaskModalActionId, async (props) => {
     await props.ack();
