@@ -1,5 +1,8 @@
 import { PlainTextInput, TimePickerInput } from "../components/input";
+import dayjs from "../plugins/dayjs";
+import { supabase } from "../plugins/supabase";
 import { AppActionFunction, AppViewFunction } from "../types/bolt";
+import { Task } from "../types/task";
 
 /** アクションID */
 export const showRegisterTaskModalActionId =
@@ -85,7 +88,7 @@ export const showRegisterTaskModal: AppActionFunction = async ({
 /** タスク情報をデータベースに登録 */
 export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   // ユーザー情報
-  const user = body["user"]["id"];
+  const user_id = body["user"]["id"];
 
   // 値 values
   const values = view["state"]["values"];
@@ -104,11 +107,31 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   console.log("帰宅時間:", remindTime);
 
   try {
+    const TASK_TABLE = supabase.from<Task>("tasks");
+
+    // 今日のタスクを削除
+    await TASK_TABLE.delete()
+      .eq("user_id", user_id)
+      .gte("created_at_unix", dayjs().startOf("d").unix())
+      .lte("created_at_unix", dayjs().endOf("d").unix());
+
+    // 今日のタスクを追加
+    const now_unix = dayjs().unix();
+    const { error } = await TASK_TABLE.insert([
+      { content: task1, number: 1, user_id, created_at_unix: now_unix },
+      { content: task2, number: 2, user_id, created_at_unix: now_unix },
+      { content: task3, number: 3, user_id, created_at_unix: now_unix },
+    ]);
+    if (error) throw new Error()
+
     await client.chat.postMessage({
-      channel: user,
-      text: "タスク登録機能は未実装です",
+      channel: user_id,
+      text: `登録しました！\n${remindTime}にリマインドしますね！`,
     });
   } catch (error) {
-    console.error(error);
+    await client.chat.postMessage({
+      channel: user_id,
+      text: "すみません😢、登録に失敗しました、、",
+    });
   }
 };
