@@ -138,7 +138,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   } catch (error) {
     await client.chat.postMessage({
       channel: user_id,
-      text: "すみません😢、登録に失敗しました、、",
+      text: "すみません、タスクの登録に失敗しました、、😢",
     });
   }
 };
