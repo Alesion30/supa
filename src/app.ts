@@ -28,7 +28,11 @@ export const registerApp = () => {
   });
 
   receiver.router.get("/supabase-test", async (req, res) => {
-    let { data, error } = await supabase.from<User>("users").select("user_id").eq("user_id", "sample_user_id");
+    let { data, error } = await supabase
+      .from<User>("users")
+      .select("user_id")
+      .eq("user_id", "sample_user_id");
+
     console.log("data", data);
     console.log("error", error);
 
