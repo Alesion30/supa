@@ -122,7 +122,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       { content: task2, number: 2, user_id, created_at_unix: now_unix },
       { content: task3, number: 3, user_id, created_at_unix: now_unix },
     ]);
-    if (error) throw new Error()
+    if (error) throw new Error();
 
     await client.chat.postMessage({
       channel: user_id,
