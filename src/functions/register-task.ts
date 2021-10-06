@@ -33,7 +33,7 @@ export const showRegisterTaskModal: AppActionFunction = async ({
         callback_id: showRegisterTaskModalCallbackId,
         title: {
           type: "plain_text",
-          text: "タスクの登録",
+          text: "本日のタスク登録",
         },
         blocks: [
           PlainTextInput({
