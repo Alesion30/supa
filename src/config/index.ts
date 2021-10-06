@@ -23,4 +23,4 @@ export const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET || "";
 export const SUPABASE_URL = process.env.SUPABASE_URL || "";
 
 /** public-anon-key */
-export const SUPABASE_PUBLIC_KEY = process.env.SUPABASE_PUBLIC_KEY || ""
+export const SUPABASE_PUBLIC_KEY = process.env.SUPABASE_PUBLIC_KEY || "";

@@ -2,7 +2,10 @@ import { AppMessageFunction } from "../types/bolt";
 import { showRegisterTaskModalActionId } from "./register-task";
 
 /** 1日の初めのメッセージ */
-export const showBeggingMessage: AppMessageFunction = async ({ say, message }) => {
+export const showBeggingMessage: AppMessageFunction = async ({
+  say,
+  message,
+}) => {
   // @ts-ignore
   const user = message.user;
 

@@ -6,6 +6,8 @@ import {
   showRegisterTaskModalCallbackId,
 } from "./functions/register-task";
 import { app, receiver } from "./plugins/bolt";
+import { supabase } from "./plugins/supabase";
+import { User } from "./types/user";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
@@ -23,5 +25,13 @@ export const registerApp = () => {
 
   receiver.router.get("/connection-test", (req, res) => {
     res.send("yay!");
+  });
+
+  receiver.router.get("/supabase-test", async (req, res) => {
+    let { data, error } = await supabase.from<User>("users").select("user_id").eq("user_id", "sample_user_id");
+    console.log("data", data);
+    console.log("error", error);
+
+    res.send(data);
   });
 };
