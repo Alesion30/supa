@@ -21,7 +21,7 @@ export const registerApp = () => {
     await registerTask(props);
   });
 
-  receiver.router.post("/secret-page", (req, res) => {
+  receiver.router.get("/connection-test", (req, res) => {
     res.send("yay!");
   });
 };
