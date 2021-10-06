@@ -90,44 +90,51 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   // ユーザー情報
   const user_id = body["user"]["id"];
 
-  // 値 values
-  const values = view["state"]["values"];
-
-  // タスク
-  const task1 = values[Task1BlockId][Task1ActionId].value;
-  const task2 = values[Task2BlockId][Task2ActionId].value;
-  const task3 = values[Task3BlockId][Task3ActionId].value;
-  console.log("タスク1:", task1);
-  console.log("タスク2:", task2);
-  console.log("タスク3:", task3);
-
-  // リマインド時間（帰宅時間）
-  const remindTime =
-    values[RemindTimeBlockId][RemindTimeActionId].selected_time;
-  console.log("帰宅時間:", remindTime);
-
   try {
+    // タスクテーブル
     const TASK_TABLE = supabase.from<Task>("tasks");
 
-    // 今日のタスクを削除
-    await TASK_TABLE.delete()
+    const { data, error } = await TASK_TABLE.select("*")
       .eq("user_id", user_id)
       .gte("created_at_unix", dayjs().startOf("d").unix())
       .lte("created_at_unix", dayjs().endOf("d").unix());
 
-    // 今日のタスクを追加
-    const now_unix = dayjs().unix();
-    const { error } = await TASK_TABLE.insert([
-      { content: task1, number: 1, user_id, created_at_unix: now_unix },
-      { content: task2, number: 2, user_id, created_at_unix: now_unix },
-      { content: task3, number: 3, user_id, created_at_unix: now_unix },
-    ]);
     if (error) throw new Error();
+    if (data == null) throw new Error();
 
-    await client.chat.postMessage({
-      channel: user_id,
-      text: `登録しました！\n${remindTime}にリマインドしますね！`,
-    });
+    if (data.length == 0) {
+      // 値 values
+      const values = view["state"]["values"];
+
+      // タスク
+      const task1 = values[Task1BlockId][Task1ActionId].value;
+      const task2 = values[Task2BlockId][Task2ActionId].value;
+      const task3 = values[Task3BlockId][Task3ActionId].value;
+
+      // リマインド時間（帰宅時間）
+      const remindTime =
+        values[RemindTimeBlockId][RemindTimeActionId].selected_time;
+      console.log("帰宅時間:", remindTime);
+
+      // 今日のタスクを追加
+      const now_unix = dayjs().unix();
+      const { error } = await TASK_TABLE.insert([
+        { content: task1, number: 1, user_id, created_at_unix: now_unix },
+        { content: task2, number: 2, user_id, created_at_unix: now_unix },
+        { content: task3, number: 3, user_id, created_at_unix: now_unix },
+      ]);
+      if (error) throw new Error();
+
+      await client.chat.postMessage({
+        channel: user_id,
+        text: `登録しました！\n${remindTime}にリマインドしますね！`,
+      });
+    } else {
+      await client.chat.postMessage({
+        channel: user_id,
+        text: "今日の分はもう登録されていますよ",
+      });
+    }
   } catch (error) {
     await client.chat.postMessage({
       channel: user_id,
