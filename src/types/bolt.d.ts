@@ -1,1 +1,1 @@
-export type { Block, KnownBlock } from "@slack/bolt";
+export type { Block, KnownBlock, InputBlock } from "@slack/bolt";

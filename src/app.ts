@@ -66,7 +66,7 @@ export const registerApp = () => {
             TimePickerInput({
               block_id: "task_time_block",
               action_id: "task_time_act",
-              label: "帰宅時間（帰宅する頃にリマインドします）",
+              label: "帰宅時間（帰宅する頃にタスクの状況についてお聞きします）",
               initial_time: "17:00",
             }),
           ],
@@ -85,9 +85,27 @@ export const registerApp = () => {
     }
   });
 
-  app.view("register-task", async ({ ack, body, client }) => {
+  app.view("register-task", async ({ ack, body, client, view }) => {
     await ack();
+
+    // ユーザー情報
     const user = body["user"]["id"];
+
+    // タスク
+    const task1 =
+      view["state"]["values"]["task_input_block1"]["task_act1"].value;
+    const task2 =
+      view["state"]["values"]["task_input_block2"]["task_act2"].value;
+    const task3 =
+      view["state"]["values"]["task_input_block3"]["task_act3"].value;
+    console.log(task1);
+    console.log(task2);
+    console.log(task3);
+
+    // 帰宅時間
+    const time =
+      view["state"]["values"]["task_time_block"]["task_time_act"].selected_time;
+    console.log(time);
 
     try {
       await client.chat.postMessage({

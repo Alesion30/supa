@@ -1,4 +1,4 @@
-import { KnownBlock } from "../types/bolt.d";
+import { InputBlock } from "../types/bolt.d";
 
 type PlainTextInputProps = {
   block_id: string;
@@ -12,7 +12,7 @@ type PlainTextInputProps = {
 /**
  * テキストタイプの入力欄
  */
-export const PlainTextInput = (props: PlainTextInputProps): KnownBlock => {
+export const PlainTextInput = (props: PlainTextInputProps): InputBlock => {
   return {
     type: "input",
     block_id: props.block_id,
@@ -38,23 +38,25 @@ type TimePickerInputProps = {
   label: string;
   action_id: string;
   initial_time?: string;
+  optional?: boolean;
 };
 
 /**
  * タイムピッカー
  */
-export const TimePickerInput = (props: TimePickerInputProps): KnownBlock => {
+export const TimePickerInput = (props: TimePickerInputProps): InputBlock => {
   return {
-    type: "section",
+    type: "input",
     block_id: props.block_id,
-    text: {
-      type: "mrkdwn",
+    label: {
+      type: "plain_text",
       text: props.label,
     },
-    accessory: {
+    element: {
       type: "timepicker",
       action_id: props.action_id,
       initial_time: props.initial_time,
     },
+    optional: props.optional,
   };
 };
