@@ -1,14 +1,5 @@
-import { App, ExpressReceiver, LogLevel } from "@slack/bolt";
-import { PORT, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } from "./config";
-
-const receiver = new ExpressReceiver({ signingSecret: SLACK_SIGNING_SECRET });
-
-const app = new App({
-  token: SLACK_BOT_TOKEN,
-  signingSecret: SLACK_SIGNING_SECRET,
-  logLevel: LogLevel.DEBUG,
-  receiver,
-});
+import { PORT } from "./config";
+import { app, receiver } from "./plugins/bolt";
 
 app.message("hello-test", async ({ message, say }) => {
   console.log("hello-test");
