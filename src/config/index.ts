@@ -5,8 +5,22 @@
 /** ポート番号 */
 export const PORT = parseInt(process.env.PORT || "3000");
 
+//////////////////////////////////////
+// Slack
+//////////////////////////////////////
+
 /** BOTトークン */
 export const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN || "";
 
 /** シークレットトークン */
 export const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET || "";
+
+//////////////////////////////////////
+// supabase
+//////////////////////////////////////
+
+/** URL */
+export const SUPABASE_URL = process.env.SUPABASE_URL || "";
+
+/** public-anon-key */
+export const SUPABASE_PUBLIC_KEY = process.env.SUPABASE_PUBLIC_KEY || ""
