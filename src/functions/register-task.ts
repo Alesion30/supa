@@ -1,8 +1,7 @@
 import { PlainTextInput, TimePickerInput } from "../components/input";
 import dayjs from "../plugins/dayjs";
-import { supabase } from "../plugins/supabase";
+import { TASK_TABLE } from "../plugins/supabase";
 import { AppActionFunction, AppViewFunction } from "../types/bolt";
-import { Task } from "../types/task";
 
 /** アクションID */
 export const showRegisterTaskModalActionId =
@@ -13,14 +12,14 @@ export const showRegisterTaskModalCallbackId =
   "show_register_task_modal-callback_id";
 
 // タスクID
-export const Task1BlockId = "register_task1-block_id";
-export const Task1ActionId = "register_task1-action_id";
-export const Task2BlockId = "register_task2-block_id";
-export const Task2ActionId = "register_task2-action_id";
-export const Task3BlockId = "register_task3-block_id";
-export const Task3ActionId = "register_task3-action_id";
-export const RemindTimeBlockId = "remind_time-block_id";
-export const RemindTimeActionId = "remind_time-action_id";
+export const task1BlockId = "register_task1-block_id";
+export const task1ActionId = "register_task1-action_id";
+export const task2BlockId = "register_task2-block_id";
+export const task2ActionId = "register_task2-action_id";
+export const task3BlockId = "register_task3-block_id";
+export const task3ActionId = "register_task3-action_id";
+export const remindTimeBlockId = "remind_time-block_id";
+export const remindTimeActionId = "remind_time-action_id";
 
 /** タスクを登録するためのモーダルを表示 */
 export const showRegisterTaskModal: AppActionFunction = async ({
@@ -40,32 +39,32 @@ export const showRegisterTaskModal: AppActionFunction = async ({
         },
         blocks: [
           PlainTextInput({
-            block_id: Task1BlockId,
-            action_id: Task1ActionId,
+            block_id: task1BlockId,
+            action_id: task1ActionId,
             label: "1つ目",
             placeholder: "例) #1のissueに取り掛かる",
             multiline: true,
             optional: false,
           }),
           PlainTextInput({
-            block_id: Task2BlockId,
-            action_id: Task2ActionId,
+            block_id: task2BlockId,
+            action_id: task2ActionId,
             label: "2つ目",
             placeholder: "例) 論文を一つ読む",
             multiline: true,
             optional: true,
           }),
           PlainTextInput({
-            block_id: Task3BlockId,
-            action_id: Task3ActionId,
+            block_id: task3BlockId,
+            action_id: task3ActionId,
             label: "3つ目",
             placeholder: "例) 懸垂を5回する",
             multiline: true,
             optional: true,
           }),
           TimePickerInput({
-            block_id: RemindTimeBlockId,
-            action_id: RemindTimeActionId,
+            block_id: remindTimeBlockId,
+            action_id: remindTimeActionId,
             label: "帰宅時間（帰宅する頃にタスクの状況についてお聞きします）",
             initial_time: "17:00",
           }),
@@ -91,9 +90,6 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   const user_id = body["user"]["id"];
 
   try {
-    // タスクテーブル
-    const TASK_TABLE = supabase.from<Task>("tasks");
-
     const { data, error } = await TASK_TABLE.select("*")
       .eq("user_id", user_id)
       .gte("created_at_unix", dayjs().startOf("d").unix())
@@ -107,13 +103,13 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       const values = view["state"]["values"];
 
       // タスク
-      const task1 = values[Task1BlockId][Task1ActionId].value;
-      const task2 = values[Task2BlockId][Task2ActionId].value;
-      const task3 = values[Task3BlockId][Task3ActionId].value;
+      const task1 = values[task1BlockId][task1ActionId].value;
+      const task2 = values[task2BlockId][task2ActionId].value;
+      const task3 = values[task3BlockId][task3ActionId].value;
 
       // リマインド時間（帰宅時間）
       const remindTime =
-        values[RemindTimeBlockId][RemindTimeActionId].selected_time;
+        values[remindTimeBlockId][remindTimeActionId].selected_time;
       console.log("帰宅時間:", remindTime);
 
       // 今日のタスクを追加

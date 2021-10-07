@@ -7,7 +7,7 @@ import {
   SlackViewMiddlewareArgs,
 } from "@slack/bolt";
 
-export type { Block, KnownBlock, InputBlock } from "@slack/bolt";
+export type { Block, KnownBlock, InputBlock, DividerBlock } from "@slack/bolt";
 
 /** action listener関数 */
 export type AppActionFunction = Middleware<
