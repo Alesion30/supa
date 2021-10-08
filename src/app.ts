@@ -14,10 +14,18 @@ import {
   task3ReportActionId,
 } from "./functions/report-task";
 import { showTaskList } from "./functions/show-task";
+import { deleteAllMessage } from "./helpers/delete-message";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
-  app.message("register-task", showBeggingMessage);
+  app.message("register-task", async (props) => {
+    // メッセージを削除
+    const channel = props.message.channel;
+    await deleteAllMessage(channel, props.client);
+
+    // タスク登録用のメッセージを送信
+    await showBeggingMessage(props);
+  });
   app.message("report-task", showReportTaskList);
   app.message("show-task", showTaskList);
 
@@ -25,15 +33,7 @@ export const registerApp = () => {
   app.message("chat-delete", async ({ client, message }) => {
     try {
       const channel = message.channel;
-      const history = await client.conversations.history({ channel });
-      console.log(history);
-      history.messages?.forEach((message) => {
-        const ts = message.ts;
-        const user = message.user;
-        if (ts && user == "U02G83DQQDV") {
-          client.chat.delete({ channel, ts });
-        }
-      });
+      await deleteAllMessage(channel, client);
     } catch (err) {
       console.error(err);
     }

@@ -127,70 +127,49 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   const now = dayjs();
 
   try {
-    // 本日のタスクを取得する
-    const queryRef = query(
-      taskCollectionRef,
-      where("user_id", "==", user_id),
-      orderBy("created_at"),
-      startAt(now.startOf("d").toDate()),
-      endAt(now.endOf("d").toDate())
-    );
-    const querySnapshot = await getDocs(queryRef);
-    const docs = querySnapshot.docs;
+    // 値 values
+    const values = view["state"]["values"];
 
-    if (docs.length == 0) {
-      // 値 values
-      const values = view["state"]["values"];
+    // タスク
+    const task1_val = values[task1BlockId][task1ActionId].value ?? null;
+    const task2_val = values[task2BlockId][task2ActionId].value ?? null;
+    const task3_val = values[task3BlockId][task3ActionId].value ?? null;
 
-      // タスク
-      const task1 = values[task1BlockId][task1ActionId].value ?? null;
-      const task2 = values[task2BlockId][task2ActionId].value ?? null;
-      const task3 = values[task3BlockId][task3ActionId].value ?? null;
+    // リマインド時間（帰宅時間）
+    const remindTime =
+      values[remindTimeBlockId][remindTimeActionId].selected_time;
 
-      // リマインド時間（帰宅時間）
-      const remindTime =
-        values[remindTimeBlockId][remindTimeActionId].selected_time;
-
-      // 今日のタスクを追加
-      const tasks: Task[] = [
-        {
-          content: task1,
-          achievement: 0,
-          number: 1,
-          user_id: user_id,
-          created_at: now.toDate(),
-        },
-        {
-          content: task2,
-          achievement: 0,
-          number: 2,
-          user_id: user_id,
-          created_at: now.toDate(),
-        },
-        {
-          content: task3,
-          achievement: 0,
-          number: 3,
-          user_id: user_id,
-          created_at: now.toDate(),
-        },
-      ];
-      tasks.forEach(async (task) => {
-        await addDoc(taskCollectionRef, task);
-      });
-
-      await client.chat.postMessage({
-        channel: user_id,
-        text: `登録しました！\n${remindTime}にリマインドしますね！`,
-      });
-    } else {
-      await client.chat.postMessage({
-        channel: user_id,
-        text: "今日の分はもう登録されていますよ",
-      });
+    // 今日のタスクを追加
+    const task1: Task = {
+      content: task1_val,
+      achievement: 0,
+      number: 1,
+      user_id: user_id,
+      created_at: now.toDate(),
     }
+    await addDoc(taskCollectionRef, task1);
+    const task2: Task = {
+      content: task2_val,
+      achievement: 0,
+      number: 2,
+      user_id: user_id,
+      created_at: now.toDate(),
+    }
+    await addDoc(taskCollectionRef, task2);
+    const task3: Task = {
+      content: task3_val,
+      achievement: 0,
+      number: 3,
+      user_id: user_id,
+      created_at: now.toDate(),
+    }
+    await addDoc(taskCollectionRef, task3);
+
+    await client.chat.postMessage({
+      channel: user_id,
+      text: `ありがとうございます！${remindTime}になったらタスクの状況についてお聞きします！`,
+    });
   } catch (error) {
-    console.log(error);
     await client.chat.postMessage({
       channel: user_id,
       text: "すみません、タスクの登録に失敗しました、、😢",
