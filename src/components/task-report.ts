@@ -32,7 +32,7 @@ export const TaskReportBlocks = (
     Divider,
   ];
 
-  if (props.task1?.content != null) {
+  if (props.task1?.id != undefined && props.task1?.content != null) {
     blockList.push({
       type: "header",
       text: {
@@ -50,7 +50,7 @@ export const TaskReportBlocks = (
     blockList.push(Divider);
   }
 
-  if (props.task2?.content != null) {
+  if (props.task2?.id != undefined && props.task2?.content != null) {
     blockList.push({
       type: "header",
       text: {
@@ -68,7 +68,7 @@ export const TaskReportBlocks = (
     blockList.push(Divider);
   }
 
-  if (props.task3?.content != null) {
+  if (props.task3?.id != undefined && props.task3?.content != null) {
     blockList.push({
       type: "header",
       text: {
@@ -90,7 +90,7 @@ export const TaskReportBlocks = (
 };
 
 type TaskRadioButtonProps = {
-  task_id: number;
+  task_id: string;
   block_id: string;
   action_id: string;
 };

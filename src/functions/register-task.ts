@@ -1,7 +1,17 @@
 import { PlainTextInput, TimePickerInput } from "../components/input";
 import dayjs from "../plugins/dayjs";
-import { TASK_TABLE } from "../plugins/supabase";
+import {
+  addDoc,
+  endAt,
+  getDocs,
+  orderBy,
+  query,
+  startAt,
+  where,
+} from "../plugins/firebase";
+import { taskCollectionRef } from "../schemas/task";
 import { AppActionFunction, AppViewFunction } from "../types/bolt";
+import { Task } from "../types/task";
 
 /** アクションID */
 export const showRegisterTaskModalActionId =
@@ -89,37 +99,61 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
   // ユーザー情報
   const user_id = body["user"]["id"];
 
+  // 現在時刻
+  const now = dayjs();
+
   try {
-    const { data, error } = await TASK_TABLE.select("*")
-      .eq("user_id", user_id)
-      .gte("created_at_unix", dayjs().startOf("d").unix())
-      .lte("created_at_unix", dayjs().endOf("d").unix());
+    // 本日のタスクを取得する
+    const queryRef = query(
+      taskCollectionRef,
+      where("user_id", "==", user_id),
+      orderBy("created_at"),
+      startAt(now.startOf("d").toDate()),
+      endAt(now.endOf("d").toDate())
+    );
+    const querySnapshot = await getDocs(queryRef);
+    const docs = querySnapshot.docs;
 
-    if (error) throw new Error();
-    if (data == null) throw new Error();
-
-    if (data.length == 0) {
+    if (docs.length == 0) {
       // 値 values
       const values = view["state"]["values"];
 
       // タスク
-      const task1 = values[task1BlockId][task1ActionId].value;
-      const task2 = values[task2BlockId][task2ActionId].value;
-      const task3 = values[task3BlockId][task3ActionId].value;
+      const task1 = values[task1BlockId][task1ActionId].value ?? null;
+      const task2 = values[task2BlockId][task2ActionId].value ?? null;
+      const task3 = values[task3BlockId][task3ActionId].value ?? null;
 
       // リマインド時間（帰宅時間）
       const remindTime =
         values[remindTimeBlockId][remindTimeActionId].selected_time;
-      console.log("帰宅時間:", remindTime);
 
       // 今日のタスクを追加
-      const now_unix = dayjs().unix();
-      const { error } = await TASK_TABLE.insert([
-        { content: task1, number: 1, user_id, created_at_unix: now_unix },
-        { content: task2, number: 2, user_id, created_at_unix: now_unix },
-        { content: task3, number: 3, user_id, created_at_unix: now_unix },
-      ]);
-      if (error) throw new Error();
+      const tasks: Task[] = [
+        {
+          content: task1,
+          achievement: 0,
+          number: 1,
+          user_id: user_id,
+          created_at: now.toDate(),
+        },
+        {
+          content: task2,
+          achievement: 0,
+          number: 2,
+          user_id: user_id,
+          created_at: now.toDate(),
+        },
+        {
+          content: task3,
+          achievement: 0,
+          number: 3,
+          user_id: user_id,
+          created_at: now.toDate(),
+        },
+      ];
+      tasks.forEach(async (task) => {
+        await addDoc(taskCollectionRef, task);
+      });
 
       await client.chat.postMessage({
         channel: user_id,
@@ -132,6 +166,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       });
     }
   } catch (error) {
+    console.log(error);
     await client.chat.postMessage({
       channel: user_id,
       text: "すみません、タスクの登録に失敗しました、、😢",

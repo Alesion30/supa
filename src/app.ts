@@ -6,8 +6,6 @@ import {
   showRegisterTaskModalCallbackId,
 } from "./functions/register-task";
 import { app, receiver } from "./plugins/bolt";
-import { supabase } from "./plugins/supabase";
-import { User } from "./types/user";
 import {
   reportTask,
   showReportTaskList,
@@ -25,13 +23,13 @@ export const registerApp = () => {
   app.message("chat-delete", async ({ client, message }) => {
     try {
       const channel = message.channel;
-      const history = await client.conversations.history({ channel })
+      const history = await client.conversations.history({ channel });
       console.log(history);
-      history.messages?.forEach(message => {
+      history.messages?.forEach((message) => {
         const ts = message.ts;
         const user = message.user;
         if (ts && user == "U02G83DQQDV") {
-          client.chat.delete({ channel, ts })
+          client.chat.delete({ channel, ts });
         }
       });
     } catch (err) {
@@ -64,19 +62,7 @@ export const registerApp = () => {
     await registerTask(props);
   });
 
-  receiver.router.get("/connection-test", (req, res) => {
+  receiver.router.get("/connection-test", (_, res) => {
     res.send("yay!");
-  });
-
-  receiver.router.get("/supabase-test", async (req, res) => {
-    let { data, error } = await supabase
-      .from<User>("users")
-      .select("user_id")
-      .eq("user_id", "sample_user_id");
-
-    console.log("data", data);
-    console.log("error", error);
-
-    res.send(data);
   });
 };
