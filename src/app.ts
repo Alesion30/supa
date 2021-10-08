@@ -13,11 +13,13 @@ import {
   task2ReportActionId,
   task3ReportActionId,
 } from "./functions/report-task";
+import { showTaskList } from "./functions/show-task";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
   app.message("register-task", showBeggingMessage);
   app.message("report-task", showReportTaskList);
+  app.message("show-task", showTaskList);
 
   // メッセージ削除
   app.message("chat-delete", async ({ client, message }) => {

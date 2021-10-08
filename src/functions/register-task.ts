@@ -35,60 +35,84 @@ export const remindTimeActionId = "remind_time-action_id";
 export const showRegisterTaskModal: AppActionFunction = async ({
   body,
   client,
+  say,
 }) => {
+  // ユーザー情報
+  const user_id = body["user"]["id"];
+
+  // 現在時刻
+  const now = dayjs();
+
   try {
-    await client.views.open({
-      // @ts-ignore
-      trigger_id: body.trigger_id,
-      view: {
-        type: "modal",
-        callback_id: showRegisterTaskModalCallbackId,
-        title: {
-          type: "plain_text",
-          text: "本日のタスク登録",
+    // 本日のタスクを取得する
+    const queryRef = query(
+      taskCollectionRef,
+      where("user_id", "==", user_id),
+      orderBy("created_at"),
+      startAt(now.startOf("d").toDate()),
+      endAt(now.endOf("d").toDate())
+    );
+    const querySnapshot = await getDocs(queryRef);
+    const docs = querySnapshot.docs;
+
+    if (docs.length == 0) {
+      await client.views.open({
+        // @ts-ignore
+        trigger_id: body.trigger_id,
+        view: {
+          type: "modal",
+          callback_id: showRegisterTaskModalCallbackId,
+          title: {
+            type: "plain_text",
+            text: "本日のタスク登録",
+          },
+          blocks: [
+            PlainTextInput({
+              block_id: task1BlockId,
+              action_id: task1ActionId,
+              label: "1つ目",
+              placeholder: "例) #1のissueに取り掛かる",
+              multiline: true,
+              optional: false,
+            }),
+            PlainTextInput({
+              block_id: task2BlockId,
+              action_id: task2ActionId,
+              label: "2つ目",
+              placeholder: "例) 論文を一つ読む",
+              multiline: true,
+              optional: true,
+            }),
+            PlainTextInput({
+              block_id: task3BlockId,
+              action_id: task3ActionId,
+              label: "3つ目",
+              placeholder: "例) 懸垂を5回する",
+              multiline: true,
+              optional: true,
+            }),
+            TimePickerInput({
+              block_id: remindTimeBlockId,
+              action_id: remindTimeActionId,
+              label: "帰宅時間（帰宅する頃にタスクの状況についてお聞きします）",
+              initial_time: "17:00",
+            }),
+          ],
+          submit: {
+            type: "plain_text",
+            text: "登録",
+          },
+          close: {
+            type: "plain_text",
+            text: "閉じる",
+          },
         },
-        blocks: [
-          PlainTextInput({
-            block_id: task1BlockId,
-            action_id: task1ActionId,
-            label: "1つ目",
-            placeholder: "例) #1のissueに取り掛かる",
-            multiline: true,
-            optional: false,
-          }),
-          PlainTextInput({
-            block_id: task2BlockId,
-            action_id: task2ActionId,
-            label: "2つ目",
-            placeholder: "例) 論文を一つ読む",
-            multiline: true,
-            optional: true,
-          }),
-          PlainTextInput({
-            block_id: task3BlockId,
-            action_id: task3ActionId,
-            label: "3つ目",
-            placeholder: "例) 懸垂を5回する",
-            multiline: true,
-            optional: true,
-          }),
-          TimePickerInput({
-            block_id: remindTimeBlockId,
-            action_id: remindTimeActionId,
-            label: "帰宅時間（帰宅する頃にタスクの状況についてお聞きします）",
-            initial_time: "17:00",
-          }),
-        ],
-        submit: {
-          type: "plain_text",
-          text: "登録",
-        },
-        close: {
-          type: "plain_text",
-          text: "閉じる",
-        },
-      },
-    });
+      });
+    } else {
+      await say({
+        text: "今日の分はもう登録されていますよ",
+      });
+    }
   } catch (error) {
     console.error(error);
   }

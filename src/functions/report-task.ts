@@ -98,7 +98,11 @@ export const reportTask: (task_num: 1 | 2 | 3) => AppActionFunction =
         const achievement = parseInt(ary[1]);
         console.log("task_id", task_id);
         console.log("achievement", achievement);
-        await setDoc(taskDocumentRef(task_id), { achievement }, { merge: true });
+        await setDoc(
+          taskDocumentRef(task_id),
+          { achievement },
+          { merge: true }
+        );
       }
     } catch (err) {
       await say({
