@@ -21,6 +21,24 @@ export const registerApp = () => {
   app.message("register-task", showBeggingMessage);
   app.message("report-task", showReportTaskList);
 
+  // メッセージ削除
+  app.message("chat-delete", async ({ client, message }) => {
+    try {
+      const channel = message.channel;
+      const history = await client.conversations.history({ channel })
+      console.log(history);
+      history.messages?.forEach(message => {
+        const ts = message.ts;
+        const user = message.user;
+        if (ts && user == "U02G83DQQDV") {
+          client.chat.delete({ channel, ts })
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
   app.action(showRegisterTaskModalActionId, async (props) => {
     await props.ack();
     await showRegisterTaskModal(props);
