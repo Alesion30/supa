@@ -42,6 +42,7 @@ export const TaskReportBlocks = (
     });
     blockList.push(
       TaskRadioButton({
+        task_id: props.task1.id,
         block_id: task1ReportBlockId,
         action_id: task1ReportActionId,
       })
@@ -59,6 +60,7 @@ export const TaskReportBlocks = (
     });
     blockList.push(
       TaskRadioButton({
+        task_id: props.task2.id,
         block_id: task2ReportBlockId,
         action_id: task2ReportActionId,
       })
@@ -76,6 +78,7 @@ export const TaskReportBlocks = (
     });
     blockList.push(
       TaskRadioButton({
+        task_id: props.task3.id,
         block_id: task3ReportBlockId,
         action_id: task3ReportActionId,
       })
@@ -87,6 +90,7 @@ export const TaskReportBlocks = (
 };
 
 type TaskRadioButtonProps = {
+  task_id: number;
   block_id: string;
   action_id: string;
 };
@@ -108,7 +112,7 @@ const TaskRadioButton = (props: TaskRadioButtonProps): KnownBlock => {
         type: "radio_buttons",
         action_id: props.action_id,
         initial_option: {
-          value: "0",
+          value: `${props.task_id}:0`,
           text: {
             type: "plain_text",
             text: "未選択",
@@ -116,28 +120,28 @@ const TaskRadioButton = (props: TaskRadioButtonProps): KnownBlock => {
         },
         options: [
           {
-            value: "3",
+            value: `${props.task_id}:3`,
             text: {
               type: "plain_text",
               text: "完璧😏",
             },
           },
           {
-            value: "2",
+            value: `${props.task_id}:2`,
             text: {
               type: "plain_text",
               text: "半分くらいはできた😄",
             },
           },
           {
-            value: "1",
+            value: `${props.task_id}:1`,
             text: {
               type: "plain_text",
               text: "ほとんどできなかった😢",
             },
           },
           {
-            value: "0",
+            value: `${props.task_id}:0`,
             text: {
               type: "plain_text",
               text: "未選択",

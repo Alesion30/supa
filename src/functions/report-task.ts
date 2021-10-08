@@ -1,7 +1,7 @@
 import { TaskReportBlocks } from "../components/task-report";
 import dayjs from "../plugins/dayjs";
 import { TASK_TABLE } from "../plugins/supabase";
-import { AppMessageFunction } from "../types/bolt";
+import { AppActionFunction, AppMessageFunction } from "../types/bolt";
 
 // タスクID
 export const task1ReportBlockId = "report_task1-block_id";
@@ -11,8 +11,11 @@ export const task2ReportActionId = "report_task2-action_id";
 export const task3ReportBlockId = "report_task3-block_id";
 export const task3ReportActionId = "report_task3-action_id";
 
-/** タスク報告 */
-export const reportTask: AppMessageFunction = async ({ say, message }) => {
+/** タスク一覧表示 */
+export const showReportTaskList: AppMessageFunction = async ({
+  say,
+  message,
+}) => {
   // @ts-ignore
   const user_id = message.user as string;
 
@@ -41,5 +44,41 @@ export const reportTask: AppMessageFunction = async ({ say, message }) => {
     await say({
       text: "すみません、タスクの表示に失敗しました、、😢",
     });
+  }
+};
+
+/** タスクの完了報告処理 */
+export const reportTask: (task_num: 1 | 2 | 3) => AppActionFunction = (task_num) => async ({ body }) => {
+  // @ts-ignore
+  const values = body["state"]["values"];
+
+  try {
+    let value: string; // expect: `${task_id}:${answer_val}`
+    switch (task_num) {
+      case 1:
+        value = values[task1ReportBlockId][task1ReportActionId].selected_option.value;
+        break;
+      case 2:
+        value = values[task2ReportBlockId][task2ReportActionId].selected_option.value;
+        break;
+      case 3:
+        value = values[task3ReportBlockId][task3ReportActionId].selected_option.value;
+        break;
+    }
+
+    const ary = value.split(":");
+    if (ary.length == 2) {
+      const task_id = parseInt(ary[0]);
+      const answer = parseInt(ary[1]);
+      console.log("task_id", task_id)
+      console.log("answer", answer)
+
+      const data = await TASK_TABLE
+        .update({ achievement: answer })
+        .eq("id", task_id)
+      console.log(data)
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
