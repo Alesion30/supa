@@ -5,7 +5,9 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier -w .",
-    "start": "ts-node --require dotenv/config src/main.ts"
+    "start": "ts-node --require dotenv/config src/main.ts",
+    "deploy": "git push heroku main",
+    "logs": "heroku logs --tail"
   },
   "devDependencies": {
     "@types/node": "^16.10.2",
