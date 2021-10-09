@@ -47,7 +47,11 @@ export const showOpenModalMessage = async () => {
   const docs = querySnapshot.docs;
   docs.forEach(async (doc) => {
     const user = doc.data();
-    await deleteAllMessageExceptIntro(user.user_id);
+    try {
+      await deleteAllMessageExceptIntro(user.user_id);
+    } catch (err) {
+      console.error(err);
+    }
     await app.client.chat.postMessage({
       channel: user.user_id,
       text: "",
