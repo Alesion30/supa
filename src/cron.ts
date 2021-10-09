@@ -5,7 +5,7 @@ import { userCollectionRef } from "./schemas/user";
 
 /** cron処理を登録 */
 export const registerCron = () => {
-  schedule("15 12 * * *", async () => {
+  schedule("20 12 * * *", async () => {
     const queryRef = query(
       userCollectionRef,
       where("isSubscribed", "==", true)
