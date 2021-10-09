@@ -68,7 +68,7 @@ export const registerUser: AppActionFunction = async ({
     await setDoc(userDocumentRef(user_id), user, { merge: true });
 
     const channel = body.channel!.id!;
-    await deleteAllMessageExceptIntro(channel, client);
+    await deleteAllMessageExceptIntro(channel);
 
     await say({ text: "ありがとうございます！" });
   } catch (err) {
