@@ -48,7 +48,6 @@ export const showSelfIntroductionMessage: AppEventFunction<"app_home_opened"> =
 export const registerUser: AppActionFunction = async ({
   body,
   say,
-  client,
 }) => {
   // ユーザー情報
   const user_id = body.user.id;
@@ -57,17 +56,18 @@ export const registerUser: AppActionFunction = async ({
   // 現在時刻
   const now = dayjs();
 
-  const user: User = {
-    user_id,
-    user_name,
-    isSubscribed: true,
-    created_at: now.toDate(),
-  };
-
   try {
-    await setDoc(userDocumentRef(user_id), user, { merge: true });
-
     const channel = body.channel!.id!;
+
+    const user: User = {
+      user_id,
+      user_name,
+      dm_channel: channel,
+      is_subscribed: true,
+      created_at: now.toDate(),
+    };
+
+    await setDoc(userDocumentRef(user_id), user, { merge: true });
     await deleteAllMessageExceptIntro(channel);
 
     await say({ text: "ありがとうございます！" });

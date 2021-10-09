@@ -1,6 +1,7 @@
 export type User = {
   user_id: string; // ユーザーID
   user_name: string; // ユーザー名
-  isSubscribed: boolean; // 定期購読中かどうか
+  is_subscribed: boolean; // 定期購読中かどうか
+  dm_channel: string; // DM チャンネルID
   created_at: Date; // 作成日
 };

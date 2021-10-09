@@ -41,14 +41,14 @@ export const remindTimeActionId = "remind_time-action_id";
 export const showOpenModalMessage = async () => {
   const queryRef = query(
     userCollectionRef,
-    where("isSubscribed", "==", true)
+    where("is_subscribed", "==", true)
   );
   const querySnapshot = await getDocs(queryRef);
   const docs = querySnapshot.docs;
   docs.forEach(async (doc) => {
     const user = doc.data();
     try {
-      await deleteAllMessageExceptIntro(user.user_id);
+      await deleteAllMessageExceptIntro(user.dm_channel);
     } catch (err) {
       console.error(err);
     }
@@ -60,7 +60,7 @@ export const showOpenModalMessage = async () => {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `<@${user}>さん！今日やらないといけないことを3つまで教えてください！`,
+            text: `<@${user.user_id}>さん！今日やらないといけないことを3つまで教えてください！`,
           },
           accessory: {
             type: "button",
