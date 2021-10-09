@@ -20,6 +20,7 @@ import {
   registerUserActionId,
   showSelfIntroductionMessage,
 } from "./functions/show-self-introduction-message";
+import { SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } from "./config";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
@@ -79,6 +80,8 @@ export const registerApp = () => {
   });
 
   receiver.router.get("/connection-test", (_, res) => {
+    console.log(SLACK_BOT_TOKEN);
+    console.log(SLACK_SIGNING_SECRET);
     res.send("yay!");
   });
 };
