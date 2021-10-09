@@ -1,4 +1,6 @@
 import { PlainTextInput, TimePickerInput } from "../components/input";
+import { deleteAllMessageExceptIntro } from "../helpers/delete-message";
+import { app } from "../plugins/bolt";
 import dayjs from "../plugins/dayjs";
 import {
   addDoc,
@@ -10,9 +12,9 @@ import {
   where,
 } from "../plugins/firebase";
 import { taskCollectionRef } from "../schemas/task";
+import { userCollectionRef } from "../schemas/user";
 import {
   AppActionFunction,
-  AppMessageFunction,
   AppViewFunction,
 } from "../types/bolt";
 import { Task } from "../types/task";
@@ -36,31 +38,37 @@ export const remindTimeBlockId = "remind_time-block_id";
 export const remindTimeActionId = "remind_time-action_id";
 
 /** 1日の初めのメッセージ */
-export const showOpenModalMessage: AppMessageFunction = async ({
-  say,
-  message,
-}) => {
-  // @ts-ignore
-  const user = message.user;
-
-  await say({
-    blocks: [
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `<@${user}>さん！今日やらないといけないことを3つまで教えてください！`,
-        },
-        accessory: {
-          type: "button",
+export const showOpenModalMessage = async () => {
+  const queryRef = query(
+    userCollectionRef,
+    where("isSubscribed", "==", true)
+  );
+  const querySnapshot = await getDocs(queryRef);
+  const docs = querySnapshot.docs;
+  docs.forEach(async (doc) => {
+    const user = doc.data();
+    await deleteAllMessageExceptIntro(user.user_id);
+    await app.client.chat.postMessage({
+      channel: user.user_id,
+      text: "",
+      blocks: [
+        {
+          type: "section",
           text: {
-            type: "plain_text",
-            text: "回答する",
+            type: "mrkdwn",
+            text: `<@${user}>さん！今日やらないといけないことを3つまで教えてください！`,
           },
-          action_id: showRegisterTaskModalActionId,
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "回答する",
+            },
+            action_id: showRegisterTaskModalActionId,
+          },
         },
-      },
-    ],
+      ],
+    });
   });
 };
 

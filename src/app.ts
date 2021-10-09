@@ -28,19 +28,19 @@ export const registerApp = () => {
   app.message("register-task", async (props) => {
     // メッセージを削除
     const channel = props.message.channel;
-    await deleteAllMessage(channel, props.client);
+    await deleteAllMessage(channel);
 
     // タスク登録用のメッセージを送信
-    await showOpenModalMessage(props);
+    await showOpenModalMessage();
   });
   app.message("report-task", showReportTaskList);
   app.message("show-task", showTaskList);
 
   // メッセージ削除
-  app.message("chat-delete", async ({ client, message }) => {
+  app.message("chat-delete", async ({ message }) => {
     try {
       const channel = message.channel;
-      await deleteAllMessage(channel, client);
+      await deleteAllMessage(channel);
     } catch (err) {
       console.error(err);
     }
