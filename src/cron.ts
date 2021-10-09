@@ -4,5 +4,5 @@ import { showOpenModalMessage } from "./functions/register-task";
 /** cron処理を登録 */
 export const registerCron = () => {
   // 毎日9時にタスクについて聞く
-  schedule("29 13 * * *", showOpenModalMessage);
+  schedule("33 13 * * *", showOpenModalMessage);
 };

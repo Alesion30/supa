@@ -25,7 +25,8 @@ const userConverter: Converter<User> = {
     const user: User = {
       user_id: data.user_id,
       user_name: data.user_name,
-      isSubscribed: data.isSubscribed,
+      dm_channel: data.dm_channel,
+      is_subscribed: data.is_subscribed,
       created_at: data.created_at,
     };
     return user;
