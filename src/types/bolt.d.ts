@@ -23,3 +23,8 @@ export type AppMessageFunction = Middleware<
 export type AppViewFunction = Middleware<
   SlackViewMiddlewareArgs<SlackViewAction>
 >;
+
+/** event listener関数 */
+export type AppEventFunction<EventType extends string = string> = Middleware<
+  SlackEventMiddlewareArgs<EventType>
+>;

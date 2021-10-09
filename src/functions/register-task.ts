@@ -10,7 +10,11 @@ import {
   where,
 } from "../plugins/firebase";
 import { taskCollectionRef } from "../schemas/task";
-import { AppActionFunction, AppViewFunction } from "../types/bolt";
+import {
+  AppActionFunction,
+  AppMessageFunction,
+  AppViewFunction,
+} from "../types/bolt";
 import { Task } from "../types/task";
 
 /** アクションID */
@@ -30,6 +34,35 @@ export const task3BlockId = "register_task3-block_id";
 export const task3ActionId = "register_task3-action_id";
 export const remindTimeBlockId = "remind_time-block_id";
 export const remindTimeActionId = "remind_time-action_id";
+
+/** 1日の初めのメッセージ */
+export const showOpenModalMessage: AppMessageFunction = async ({
+  say,
+  message,
+}) => {
+  // @ts-ignore
+  const user = message.user;
+
+  await say({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `<@${user}>さん！今日やらないといけないことを3つまで教えてください！`,
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "回答する",
+          },
+          action_id: showRegisterTaskModalActionId,
+        },
+      },
+    ],
+  });
+};
 
 /** タスクを登録するためのモーダルを表示 */
 export const showRegisterTaskModal: AppActionFunction = async ({
@@ -146,7 +179,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       number: 1,
       user_id: user_id,
       created_at: now.toDate(),
-    }
+    };
     await addDoc(taskCollectionRef, task1);
     const task2: Task = {
       content: task2_val,
@@ -154,7 +187,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       number: 2,
       user_id: user_id,
       created_at: now.toDate(),
-    }
+    };
     await addDoc(taskCollectionRef, task2);
     const task3: Task = {
       content: task3_val,
@@ -162,7 +195,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       number: 3,
       user_id: user_id,
       created_at: now.toDate(),
-    }
+    };
     await addDoc(taskCollectionRef, task3);
 
     await client.chat.postMessage({

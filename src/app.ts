@@ -1,6 +1,6 @@
-import { showBeggingMessage } from "./functions/show-beginning-message";
 import {
   registerTask,
+  showOpenModalMessage,
   showRegisterTaskModal,
   showRegisterTaskModalActionId,
   showRegisterTaskModalCallbackId,
@@ -15,16 +15,23 @@ import {
 } from "./functions/report-task";
 import { showTaskList } from "./functions/show-task";
 import { deleteAllMessage } from "./helpers/delete-message";
+import {
+  registerUser,
+  registerUserActionId,
+  showSelfIntroductionMessage,
+} from "./functions/show-self-introduction-message";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
+  app.event("app_home_opened", showSelfIntroductionMessage);
+
   app.message("register-task", async (props) => {
     // メッセージを削除
     const channel = props.message.channel;
     await deleteAllMessage(channel, props.client);
 
     // タスク登録用のメッセージを送信
-    await showBeggingMessage(props);
+    await showOpenModalMessage(props);
   });
   app.message("report-task", showReportTaskList);
   app.message("show-task", showTaskList);
@@ -37,6 +44,12 @@ export const registerApp = () => {
     } catch (err) {
       console.error(err);
     }
+  });
+
+  // ユーザー登録
+  app.action(registerUserActionId, async (props) => {
+    await props.ack();
+    await registerUser(props);
   });
 
   app.action(showRegisterTaskModalActionId, async (props) => {
@@ -59,6 +72,7 @@ export const registerApp = () => {
     await reportTask(3)(props);
   });
 
+  // タスク登録
   app.view(showRegisterTaskModalCallbackId, async (props) => {
     await props.ack();
     await registerTask(props);
