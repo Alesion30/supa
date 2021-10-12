@@ -10,9 +10,7 @@ import { app, receiver } from "./plugins/bolt";
 import {
   reportTask,
   showReportTaskList,
-  task1ReportActionId,
-  task2ReportActionId,
-  task3ReportActionId,
+  taskReportActionId,
 } from "./functions/report-task";
 import { showTaskList } from "./functions/show-task";
 import { deleteAllMessage } from "./helpers/delete-message";
@@ -64,20 +62,9 @@ export const registerApp = () => {
     await props.ack();
     await showRegisterTaskModal(props);
   });
-
-  app.action(task1ReportActionId, async (props) => {
+  app.action(new RegExp("^" + taskReportActionId + ".*$"), async (props) => {
     await props.ack();
-    await reportTask(1)(props);
-  });
-
-  app.action(task2ReportActionId, async (props) => {
-    await props.ack();
-    await reportTask(2)(props);
-  });
-
-  app.action(task3ReportActionId, async (props) => {
-    await props.ack();
-    await reportTask(3)(props);
+    await reportTask(props);
   });
 
   // タスク登録

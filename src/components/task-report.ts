@@ -1,91 +1,31 @@
 import { Block, KnownBlock } from "../types/bolt";
 import { Divider } from "./divider";
 import { Task } from "../types/task";
-import {
-  task1ReportActionId,
-  task1ReportBlockId,
-  task2ReportActionId,
-  task2ReportBlockId,
-  task3ReportActionId,
-  task3ReportBlockId,
-} from "../functions/report-task";
 
-type TaskReportBlocksProps = {
-  user: string;
-  task1: Task | null; // タスク1
-  task2: Task | null; // タスク2
-  task3: Task | null; // タスク3
+type TaskReportBlockProps = {
+  task: Task;
+  block_id: string;
+  action_id: string;
 };
 
-/** タスク完了報告用メッセージ */
-export const TaskReportBlocks = (
-  props: TaskReportBlocksProps
+export const TaskReportBlock = (
+  props: TaskReportBlockProps
 ): (Block | KnownBlock)[] => {
   const blockList: (Block | KnownBlock)[] = [
     {
-      type: "section",
+      type: "header",
       text: {
-        type: "mrkdwn",
-        text: `<@${props.user}>さん！今日もお疲れ様でした！タスクの進捗はいかがでしたか？`,
+        type: "plain_text",
+        text: props.task.content ?? "",
       },
     },
+    TaskRadioButton({
+      task_id: props.task.id!,
+      block_id: props.block_id,
+      action_id: props.action_id,
+    }),
     Divider,
   ];
-
-  if (props.task1?.id != undefined && props.task1?.content != null) {
-    blockList.push({
-      type: "header",
-      text: {
-        type: "plain_text",
-        text: `[タスク1] ${props.task1.content}`,
-      },
-    });
-    blockList.push(
-      TaskRadioButton({
-        task_id: props.task1.id,
-        block_id: task1ReportBlockId,
-        action_id: task1ReportActionId,
-      })
-    );
-    blockList.push(Divider);
-  }
-
-  if (props.task2?.id != undefined && props.task2?.content != null) {
-    blockList.push({
-      type: "header",
-      text: {
-        type: "plain_text",
-        text: `[タスク2] ${props.task2.content}`,
-      },
-    });
-    blockList.push(
-      TaskRadioButton({
-        task_id: props.task2.id,
-        block_id: task2ReportBlockId,
-        action_id: task2ReportActionId,
-      })
-    );
-    blockList.push(Divider);
-  }
-
-  if (props.task3?.id != undefined && props.task3?.content != null) {
-    blockList.push({
-      type: "header",
-      text: {
-        type: "plain_text",
-        text: `[タスク3] ${props.task3.content}`,
-      },
-    });
-    blockList.push(
-      TaskRadioButton({
-        task_id: props.task3.id,
-        block_id: task3ReportBlockId,
-        action_id: task3ReportActionId,
-      })
-    );
-    blockList.push(Divider);
-  }
-
   return blockList;
 };
 

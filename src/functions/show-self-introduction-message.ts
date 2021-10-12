@@ -44,10 +44,7 @@ export const showSelfIntroductionMessage: AppEventFunction<"app_home_opened"> =
   };
 
 /** ユーザー登録 */
-export const registerUser: AppActionFunction = async ({
-  body,
-  say,
-}) => {
+export const registerUser: AppActionFunction = async ({ body, say }) => {
   // ユーザー情報
   const user_id = body.user.id;
   const user_name = "name" in body.user ? body.user.name : body.user.username;

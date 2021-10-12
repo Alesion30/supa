@@ -14,9 +14,7 @@ export const deleteAllMessage = async (channel: string) => {
 };
 
 /** 最初の自己紹介以外のメッセージを全削除 */
-export const deleteAllMessageExceptIntro = async (
-  channel: string
-) => {
+export const deleteAllMessageExceptIntro = async (channel: string) => {
   const history = await app.client.conversations.history({ channel });
   const messages = history.messages ?? [];
   messages.sort((a, b) => {
