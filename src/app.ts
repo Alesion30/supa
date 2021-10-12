@@ -1,7 +1,6 @@
 import {
   registerTask,
   showOpenModalMessage,
-  // showOpenModalMessage,
   showRegisterTaskModal,
   showRegisterTaskModalActionId,
   showRegisterTaskModalCallbackId,

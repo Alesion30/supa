@@ -11,7 +11,6 @@ import {
   where,
 } from "../plugins/firebase";
 import { taskCollectionRef } from "../schemas/task";
-import { userCollectionRef } from "../schemas/user";
 import { AppActionFunction, AppViewFunction } from "../types/bolt";
 import { Task } from "../types/task";
 import { User } from "../types/user";
@@ -36,32 +35,26 @@ export const remindTimeActionId = "remind_time-action_id";
 
 /** 1日の初めのメッセージ */
 export const showOpenModalMessage = async (user: User) => {
-  const queryRef = query(userCollectionRef, where("is_subscribed", "==", true));
-  const querySnapshot = await getDocs(queryRef);
-  const docs = querySnapshot.docs;
-  docs.forEach(async (doc) => {
-    const user = doc.data();
-    await app.client.chat.postMessage({
-      channel: user.user_id,
-      text: "",
-      blocks: [
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `<@${user.user_id}>さん！今日やらないといけないことを3つまで教えてください！`,
-          },
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "回答する",
-            },
-            action_id: showRegisterTaskModalActionId,
-          },
+  await app.client.chat.postMessage({
+    channel: user.user_id,
+    text: "",
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `<@${user.user_id}>さん！今日やらないといけないことを3つまで教えてください！`,
         },
-      ],
-    });
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "回答する",
+          },
+          action_id: showRegisterTaskModalActionId,
+        },
+      },
+    ],
   });
 };
 
