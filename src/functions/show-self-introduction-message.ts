@@ -1,4 +1,3 @@
-import { deleteAllMessageExceptIntro } from "../helpers/delete-message";
 import dayjs from "../plugins/dayjs";
 import { setDoc } from "../plugins/firebase";
 import { userDocumentRef } from "../schemas/user";
@@ -67,8 +66,8 @@ export const registerUser: AppActionFunction = async ({
       created_at: now.toDate(),
     };
 
+    // ユーザー情報をデータベースに登録
     await setDoc(userDocumentRef(user_id), user, { merge: true });
-    await deleteAllMessageExceptIntro(channel);
 
     await say({ text: "ありがとうございます！" });
   } catch (err) {

@@ -1,6 +1,7 @@
 import {
   registerTask,
   showOpenModalMessage,
+  // showOpenModalMessage,
   showRegisterTaskModal,
   showRegisterTaskModalActionId,
   showRegisterTaskModalCallbackId,
@@ -20,23 +21,28 @@ import {
   registerUserActionId,
   showSelfIntroductionMessage,
 } from "./functions/show-self-introduction-message";
+import { userDocumentRef } from "./schemas/user";
+import { getDoc } from "./plugins/firebase";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
   app.event("app_home_opened", showSelfIntroductionMessage);
 
+  ////////////////////////////////////////////////////////////////
+  // devコマンド
+  ////////////////////////////////////////////////////////////////
   app.message("register-task", async (props) => {
-    // メッセージを削除
-    const channel = props.message.channel;
-    await deleteAllMessage(channel);
+    // @ts-ignore
+    const user_id = props.message.user as string;
+
+    const doc = await getDoc(userDocumentRef(user_id));
+    const user = doc.data();
 
     // タスク登録用のメッセージを送信
-    await showOpenModalMessage();
+    await showOpenModalMessage(user!);
   });
   app.message("report-task", showReportTaskList);
   app.message("show-task", showTaskList);
-
-  // メッセージ削除
   app.message("chat-delete", async ({ message }) => {
     try {
       const channel = message.channel;
@@ -45,6 +51,7 @@ export const registerApp = () => {
       console.error(err);
     }
   });
+  ////////////////////////////////////////////////////////////////
 
   // ユーザー登録
   app.action(registerUserActionId, async (props) => {
@@ -52,6 +59,7 @@ export const registerApp = () => {
     await registerUser(props);
   });
 
+  // タスク報告
   app.action(showRegisterTaskModalActionId, async (props) => {
     await props.ack();
     await showRegisterTaskModal(props);
@@ -78,6 +86,7 @@ export const registerApp = () => {
     await registerTask(props);
   });
 
+  // 接続テスト用
   receiver.router.get("/connection-test", (_, res) => {
     res.send("yay!");
   });

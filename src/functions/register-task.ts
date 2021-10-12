@@ -1,5 +1,4 @@
 import { PlainTextInput, TimePickerInput } from "../components/input";
-import { deleteAllMessageExceptIntro } from "../helpers/delete-message";
 import { app } from "../plugins/bolt";
 import dayjs from "../plugins/dayjs";
 import {
@@ -18,6 +17,7 @@ import {
   AppViewFunction,
 } from "../types/bolt";
 import { Task } from "../types/task";
+import { User } from "../types/user";
 
 /** アクションID */
 export const showRegisterTaskModalActionId =
@@ -38,7 +38,7 @@ export const remindTimeBlockId = "remind_time-block_id";
 export const remindTimeActionId = "remind_time-action_id";
 
 /** 1日の初めのメッセージ */
-export const showOpenModalMessage = async () => {
+export const showOpenModalMessage = async (user: User) => {
   const queryRef = query(
     userCollectionRef,
     where("is_subscribed", "==", true)
@@ -47,11 +47,6 @@ export const showOpenModalMessage = async () => {
   const docs = querySnapshot.docs;
   docs.forEach(async (doc) => {
     const user = doc.data();
-    try {
-      await deleteAllMessageExceptIntro(user.dm_channel);
-    } catch (err) {
-      console.error(err);
-    }
     await app.client.chat.postMessage({
       channel: user.user_id,
       text: "",
@@ -158,8 +153,8 @@ export const showRegisterTaskModal: AppActionFunction = async ({
         text: "今日の分はもう登録されていますよ",
       });
     }
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
   }
 };
 

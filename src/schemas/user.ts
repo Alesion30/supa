@@ -51,4 +51,4 @@ export const userCollectionRef = collection(
  * - ドキュメント型: `User`
  */
 export const userDocumentRef = (docId: string) =>
-  doc(firestore, USER_COLLECTION_NAME, docId);
+  doc(firestore, USER_COLLECTION_NAME, docId).withConverter(userConverter);
