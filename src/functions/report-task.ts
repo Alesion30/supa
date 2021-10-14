@@ -102,33 +102,33 @@ export const showReportTaskList: AppMessageFunction = async ({
 };
 
 /** タスクの完了報告処理 */
-export const reportTask: AppActionFunction =
-  async ({ body, say }) => {
-    // @ts-ignore
-    const values = body["state"]["values"];
-    console.log(values);
+export const reportTask: AppActionFunction = async ({ body, say }) => {
+  // @ts-ignore
+  const values = body["state"]["values"];
+  console.log(values);
 
-    try {
-      for (let block_id in values) {
-        for (let action_id in values[block_id]) {
-          const value = values[block_id][action_id].selected_option.value as string
-          const ary = value.split(":");
-          if (ary.length == 2) {
-            const task_id = ary[0];
-            const achievement = parseInt(ary[1]);
-            await setDoc(
-              taskDocumentRef(task_id),
-              { achievement },
-              { merge: true }
-            );
-          }
-          break
+  try {
+    for (let block_id in values) {
+      for (let action_id in values[block_id]) {
+        const value = values[block_id][action_id].selected_option
+          .value as string;
+        const ary = value.split(":");
+        if (ary.length == 2) {
+          const task_id = ary[0];
+          const achievement = parseInt(ary[1]);
+          await setDoc(
+            taskDocumentRef(task_id),
+            { achievement },
+            { merge: true }
+          );
         }
-        break
+        break;
       }
-    } catch (err) {
-      await say({
-        text: "すみません、タスクの更新に失敗しました、、😢",
-      });
+      break;
     }
-  };
+  } catch (err) {
+    await say({
+      text: "すみません、タスクの更新に失敗しました、、😢",
+    });
+  }
+};

@@ -7,7 +7,7 @@ import { userCollectionRef } from "./schemas/user";
 export const registerCron = () => {
   // スリープ防止
   schedule("*/10 * * * *", async () => {
-    console.log("don't sleep...")
+    console.log("don't sleep...");
   });
 
   // 毎日9時にタスクについて聞く
