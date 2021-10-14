@@ -20,6 +20,7 @@ import {
 } from "./functions/show-self-introduction-message";
 import { userDocumentRef } from "./schemas/user";
 import { getDoc } from "./plugins/firebase";
+import dayjs from "./plugins/dayjs";
 
 /** イベント・ルーティングなどを登録 */
 export const registerApp = () => {
@@ -74,6 +75,12 @@ export const registerApp = () => {
 
   // 接続テスト用
   receiver.router.get("/connection-test", (_, res) => {
+    const time = "12:00";
+    const time_ary = time.split(":").map((v) => parseInt(v));
+    const hour = time_ary[0];
+    const minute = time_ary[1];
+    const base_date = dayjs().startOf("day").hour(hour).minute(minute).unix()
+    console.log(base_date);
     res.send("yay!");
   });
 };

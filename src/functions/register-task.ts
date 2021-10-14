@@ -165,6 +165,15 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
     // リマインド時間（帰宅時間）
     const remindTime =
       values[remindTimeBlockId][remindTimeActionId].selected_time;
+    const remindTimeAry = remindTime!.split(":").map((v) => parseInt(v));
+    const hour = remindTimeAry[0];
+    const minute = remindTimeAry[1];
+    const remindTimeUnix = dayjs().startOf("day").hour(hour).minute(minute).unix()
+    await client.chat.scheduleMessage({
+      channel: user_id,
+      post_at: remindTimeUnix,
+      text: "リマインドメッセージ！！",
+    });
 
     // 今日のタスクを追加
     const task1: Task = {
