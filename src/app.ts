@@ -79,7 +79,7 @@ export const registerApp = () => {
     const time_ary = time.split(":").map((v) => parseInt(v));
     const hour = time_ary[0];
     const minute = time_ary[1];
-    const base_date = dayjs().startOf("day").hour(hour).minute(minute).unix()
+    const base_date = dayjs().startOf("day").hour(hour).minute(minute).unix();
     console.log(base_date);
     res.send("yay!");
   });
