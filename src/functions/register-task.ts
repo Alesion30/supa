@@ -1,3 +1,4 @@
+import { Divider } from "../components/divider";
 import { PlainTextInput, TimePickerInput } from "../components/input";
 import { TaskReportBlock } from "../components/task-report";
 import { app } from "../plugins/bolt";
@@ -177,6 +178,23 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       .unix();
 
     // 今日のタスクを追加
+    await client.chat.scheduleMessage({
+      channel: user_id,
+      post_at: remindTimeUnix,
+      text: "",
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `<@${user_id}>さん！今日もお疲れ様でした！タスクの進捗はいかがでしたか？`,
+          },
+        },
+        Divider,
+      ],
+    });
+
+    // タスク1登録
     const task1: Task = {
       content: task1_val,
       achievement: 0,
@@ -187,16 +205,13 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
     const doc1 = await addDoc(taskCollectionRef, task1);
     const _task1: Task = {
       id: doc1.id,
-      content: task1_val,
-      achievement: 0,
-      number: 1,
-      user_id: user_id,
-      created_at: now.toDate(),
+      ...task1,
     };
     if (task1?.content != null) {
       await client.chat.scheduleMessage({
         channel: user_id,
         post_at: remindTimeUnix,
+        text: "",
         blocks: TaskReportBlock({
           task: _task1,
           block_id: `${taskReportBlockId}_${_task1.id}`,
@@ -205,26 +220,24 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       });
     }
 
+    // タスク2登録
     const task2: Task = {
-      content: task1_val,
-      achievement: 0,
-      number: 1,
-      user_id: user_id,
-      created_at: now.toDate(),
-    };
-    const doc2 = await addDoc(taskCollectionRef, task1);
-    const _task2: Task = {
-      id: doc2.id,
       content: task2_val,
       achievement: 0,
       number: 1,
       user_id: user_id,
       created_at: now.toDate(),
     };
+    const doc2 = await addDoc(taskCollectionRef, task2);
+    const _task2: Task = {
+      id: doc2.id,
+      ...task2,
+    };
     if (task2?.content != null) {
       await client.chat.scheduleMessage({
         channel: user_id,
         post_at: remindTimeUnix,
+        text: "",
         blocks: TaskReportBlock({
           task: _task2,
           block_id: `${taskReportBlockId}_${_task2.id}`,
@@ -233,26 +246,24 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       });
     }
 
+    // タスク3登録
     const task3: Task = {
-      content: task1_val,
+      content: task3_val,
       achievement: 0,
-      number: 1,
+      number: 3,
       user_id: user_id,
       created_at: now.toDate(),
     };
-    const doc3 = await addDoc(taskCollectionRef, task1);
+    const doc3 = await addDoc(taskCollectionRef, task3);
     const _task3: Task = {
       id: doc3.id,
-      content: task3_val,
-      achievement: 0,
-      number: 1,
-      user_id: user_id,
-      created_at: now.toDate(),
+      ...task3,
     };
     if (task3?.content != null) {
       await client.chat.scheduleMessage({
         channel: user_id,
         post_at: remindTimeUnix,
+        text: "",
         blocks: TaskReportBlock({
           task: _task3,
           block_id: `${taskReportBlockId}_${_task3.id}`,
