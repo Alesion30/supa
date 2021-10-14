@@ -1,4 +1,5 @@
 import { PlainTextInput, TimePickerInput } from "../components/input";
+import { TaskReportBlock } from "../components/task-report";
 import { app } from "../plugins/bolt";
 import dayjs from "../plugins/dayjs";
 import {
@@ -14,6 +15,7 @@ import { taskCollectionRef } from "../schemas/task";
 import { AppActionFunction, AppViewFunction } from "../types/bolt";
 import { Task } from "../types/task";
 import { User } from "../types/user";
+import { taskReportActionId, taskReportBlockId } from "./report-task";
 
 /** アクションID */
 export const showRegisterTaskModalActionId =
@@ -169,11 +171,6 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
     const hour = remindTimeAry[0];
     const minute = remindTimeAry[1];
     const remindTimeUnix = dayjs().startOf("day").hour(hour).minute(minute).unix()
-    await client.chat.scheduleMessage({
-      channel: user_id,
-      post_at: remindTimeUnix,
-      text: "リマインドメッセージ！！",
-    });
 
     // 今日のタスクを追加
     const task1: Task = {
@@ -183,7 +180,20 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       user_id: user_id,
       created_at: now.toDate(),
     };
-    await addDoc(taskCollectionRef, task1);
+    const doc1 = await addDoc(taskCollectionRef, task1);
+    const task1_id = doc1.id;
+    if (task1?.content != null) {
+      await client.chat.scheduleMessage({
+        channel: user_id,
+        post_at: remindTimeUnix,
+        blocks: TaskReportBlock({
+          task: task1,
+          block_id: `${taskReportBlockId}_${task1_id}`,
+          action_id: `${taskReportActionId}_${task1_id}`,
+        }),
+      });
+    }
+
     const task2: Task = {
       content: task2_val,
       achievement: 0,
@@ -191,7 +201,20 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       user_id: user_id,
       created_at: now.toDate(),
     };
-    await addDoc(taskCollectionRef, task2);
+    const doc2 = await addDoc(taskCollectionRef, task2);
+    const task2_id = doc2.id;
+    if (task2?.content != null) {
+      await client.chat.scheduleMessage({
+        channel: user_id,
+        post_at: remindTimeUnix,
+        blocks: TaskReportBlock({
+          task: task2,
+          block_id: `${taskReportBlockId}_${task2_id}`,
+          action_id: `${taskReportActionId}_${task2_id}`,
+        }),
+      });
+    }
+
     const task3: Task = {
       content: task3_val,
       achievement: 0,
@@ -199,7 +222,19 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
       user_id: user_id,
       created_at: now.toDate(),
     };
-    await addDoc(taskCollectionRef, task3);
+    const doc3 = await addDoc(taskCollectionRef, task3);
+    const task3_id = doc3.id;
+    if (task3?.content != null) {
+      await client.chat.scheduleMessage({
+        channel: user_id,
+        post_at: remindTimeUnix,
+        blocks: TaskReportBlock({
+          task: task3,
+          block_id: `${taskReportBlockId}_${task3_id}`,
+          action_id: `${taskReportActionId}_${task3_id}`,
+        }),
+      });
+    }
 
     await client.chat.postMessage({
       channel: user_id,
