@@ -5,6 +5,11 @@ import { userCollectionRef } from "./schemas/user";
 
 /** cron処理を登録 */
 export const registerCron = () => {
+  // スリープ防止
+  schedule("*/10 * * * *", async () => {
+    console.log("don't sleep...")
+  });
+
   // 毎日9時にタスクについて聞く
   schedule("0 9 * * *", async () => {
     const queryRef = query(
