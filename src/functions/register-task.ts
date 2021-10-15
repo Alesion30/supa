@@ -210,7 +210,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
     if (task1?.content != null) {
       await client.chat.scheduleMessage({
         channel: user_id,
-        post_at: remindTimeUnix,
+        post_at: remindTimeUnix + 1,
         text: "",
         blocks: TaskReportBlock({
           task: _task1,
@@ -236,7 +236,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
     if (task2?.content != null) {
       await client.chat.scheduleMessage({
         channel: user_id,
-        post_at: remindTimeUnix,
+        post_at: remindTimeUnix + 2,
         text: "",
         blocks: TaskReportBlock({
           task: _task2,
@@ -262,7 +262,7 @@ export const registerTask: AppViewFunction = async ({ body, client, view }) => {
     if (task3?.content != null) {
       await client.chat.scheduleMessage({
         channel: user_id,
-        post_at: remindTimeUnix,
+        post_at: remindTimeUnix + 3,
         text: "",
         blocks: TaskReportBlock({
           task: _task3,
